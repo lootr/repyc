@@ -5,7 +5,7 @@ OBJ=$(SRC:$(ORIG_DIR)%.py=.%.pyc)
 
 all: $(OBJ)
 
-.PHONY: relink clean
+.PHONY: clean
 
 %.pyc: $(ORIG_DIR)/%.py
 	python$(shell basename $$PWD) -c 'import py_compile;py_compile.compile("$<", "$@");'
