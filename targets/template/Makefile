@@ -1,5 +1,4 @@
-PYTHON=python$(shell basename $$PWD)
-LN=ln -sf
+PYTHON=python$(subst _,.,$(shell basename $$PWD))
 ORIG_DIR=../../src
 SRC=$(wildcard $(ORIG_DIR)/*.py)
 OBJ=$(SRC:$(ORIG_DIR)%.py=.%.pyc)

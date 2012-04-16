@@ -1,4 +1,4 @@
-TARGETS=$(wildcard *.*)
+TARGETS=$(wildcard *_*)
 
 all:
 	@(for t in $(TARGETS); do $(MAKE) -C $$t $@; done)
