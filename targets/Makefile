@@ -6,7 +6,8 @@ all:
 re:
 	@(for t in $(TARGETS); do $(MAKE) -C $$t $@; done)
 
-.PHONY: clean
-
 clean:
+	@(for t in $(TARGETS); do $(MAKE) -C $$t $@; done)
+
+magic:
 	@(for t in $(TARGETS); do $(MAKE) -C $$t $@; done)
