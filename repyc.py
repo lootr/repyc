@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-import dis
 import marshal
-import opcode
 import optparse
+import os.path
 import struct
+import sys
 import time as _time
 
 class Repyc(object):
@@ -15,12 +15,35 @@ class Repyc(object):
         if isinstance(bfile, basestring):
             bfile = file(bfile, 'rb')
         data = bfile.read(8)
-        self._magic = ''.join(struct.unpack("cccc", data[:4]))
+        self._magic = struct.unpack("<H", data[:2])[0]
         self._time = _time.gmtime(struct.unpack("<i", data[4:])[0])
         self._bc = marshal.load(bfile)
         if options.get('verbose'):
-            print "MAGIC:", self._magic.encode('hex')
+            print "MAGIC:", self._magic
             print "TIME:",  _time.asctime(self._time)
+        self._target = None
+
+    def find_target(self):
+        base_path = os.path.join(os.path.dirname(__file__), "targets")
+        for entry in os.listdir(base_path):
+            p = os.path.join(base_path, entry)
+            if os.path.isdir(p):
+                try:
+                    f = file(os.path.join(p, "magic"), 'rb')
+                except IOError:
+                    continue
+                try:
+                    magic = int(f.read())
+                finally:
+                    f.close()
+                if magic == self._magic:
+                    sys.path.append(base_path)
+                    try:
+                        self._target = __import__(entry, globals(), locals(), ['opcode'])
+                    finally:
+                        sys.path.pop()
+                    break
+        return self
 
     def show_hex(self):
         print map(ord, self._bc.co_code)
@@ -31,8 +54,8 @@ class Repyc(object):
         c = map(ord, self._bc.co_code)
         while i < len(c):
           inst = c[i]
-          print dis.opname[inst]
-          if inst < opcode.HAVE_ARGUMENT:
+          print self._target.opcode.opname[inst]
+          if inst < self._target.opcode.HAVE_ARGUMENT:
               i += 1
           else:
               i += 3
@@ -50,4 +73,6 @@ def build_parser():
 
 if __name__ == '__main__':
     (options, args) = build_parser().parse_args()
-    Repyc(*args[:2], options=vars(options)).show_hex().disassemble()
+    Repyc(*args[:2], options=vars(options)).find_target()\
+                                           .show_hex()\
+                                           .disassemble()
