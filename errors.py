@@ -1,0 +1,2 @@
+class RepycException(Exception):
+    pass
