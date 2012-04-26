@@ -8,7 +8,7 @@ all: $(OBJ)
 .PHONY: clean magic
 
 %.pyc: $(ORIG_DIR)/%.py
-	$(PYTHON) -c 'import py_compile;py_compile.compile("$<", "$@");'
+	$(PYTHON) -c 'import py_compile;py_compile.compile("$<", "./$@");'
 
 magic:
 	$(PYTHON) -c 'import imp,struct;print (struct.unpack("<H", imp.get_magic()[:2])[0])' > magic
