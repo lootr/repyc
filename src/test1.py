@@ -1,2 +1,2 @@
 a = "toto"
-print a
+print (a)
