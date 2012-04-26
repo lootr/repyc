@@ -11,7 +11,7 @@ all: $(OBJ)
 	$(PYTHON) -c 'import py_compile;py_compile.compile("$<", "$@");'
 
 magic:
-	$(PYTHON) -c 'import imp,struct;print struct.unpack("<H", imp.get_magic()[:2])[0]' > magic
+	$(PYTHON) -c 'import imp,struct;print (struct.unpack("<H", imp.get_magic()[:2])[0])' > magic
 
 clean:
 	$(RM) $(OBJ)
